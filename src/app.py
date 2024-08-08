@@ -45,6 +45,49 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+@app.route('/teachers', methods=['GET'])
+#Get ALL teachers
+def get_all_teachers():
+    if request.method == 'GET':
+        return Teachers.query.all()
+
+@app.route('/teacher/<int:id>', methods=['GET', 'DELETE', 'POST'])
+#Get ONE teacher, route singular since getting ONE teacher
+def get_one_teacher():
+    if request.method == 'GET':
+        return Teachers.query.filter_by(id)
+    elif request.method == 'DELETE':
+        Teachers.query.filter_by(id).delete()
+        db.session.commit()
+        return 
+    elif request.method == 'POST':
+        email =  request.form["email"] #this assumes that the request I'm getting has an email. 
+        name = request.form['name']
+        experience = request.form['experience']
+        subjects = request.form['subjects']
+        is_active = request.form['is_active']
+        add = Teachers(id, email, name, experience, subjects, is_active )
+        db.session.add(add)
+        db.session.commit()
+        
+        return jsonify(add), 200
+
+#@app.route('/students', methods=['GET'])
+#get ALL students
+
+#@app.route('/student/<int:id >', methods=['GET', 'DELETE', 'POST'])
+#get ONE student, route singular since getting ONE student
+
+#@app.route('/subjects', methods=['GET'])
+#get subjects
+
+#@app.route('/cohorts', methods=['GET'])
+#get cohorts
+
+
+
+
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
